@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"os"
 	"time"
-	"userCrud/api"
-	"userCrud/models/application"
+	"userCrud/internal/api"
+	"userCrud/internal/models"
 )
 
 func main() {
@@ -18,7 +18,7 @@ func main() {
 }
 
 func run() error {
-	db := application.NewApplication()
+	db := models.NewApplication()
 
 	handler := api.NewHandler(db)
 

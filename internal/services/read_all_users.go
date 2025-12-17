@@ -2,17 +2,16 @@ package services
 
 import (
 	"net/http"
-	"userCrud/models/application"
-	"userCrud/models/user"
-	"userCrud/utils"
+	"userCrud/internal/models"
+	"userCrud/internal/utils"
 )
 
-func HandleGetUsers(db *application.Application) http.HandlerFunc {
+func HandleGetUsers(db *models.Application) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		data := db.FindAll()
-		users := make([]user.UserResponse, 0, len(data))
+		users := make([]models.UserResponse, 0, len(data))
 		for id, u := range data {
-			u := user.UserResponse{
+			u := models.UserResponse{
 				Id:        id.String(),
 				FirstName: u.FirstName,
 				LastName:  u.LastName,

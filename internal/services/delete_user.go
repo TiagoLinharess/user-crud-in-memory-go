@@ -2,16 +2,14 @@ package services
 
 import (
 	"net/http"
-	"userCrud/models/application"
-	"userCrud/models/response"
-	"userCrud/models/user"
-	"userCrud/utils"
+	"userCrud/internal/models"
+	"userCrud/internal/utils"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 )
 
-func HandleDeleteUser(db *application.Application) http.HandlerFunc {
+func HandleDeleteUser(db *models.Application) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		idString := chi.URLParam(r, "id")
 		id, err := uuid.Parse(idString)
@@ -19,7 +17,7 @@ func HandleDeleteUser(db *application.Application) http.HandlerFunc {
 		if err != nil {
 			utils.SendJSON(
 				w,
-				response.ResponseError{Error: "id is invalid"},
+				models.ResponseError{Error: "id is invalid"},
 				http.StatusBadRequest,
 			)
 			return
@@ -30,13 +28,13 @@ func HandleDeleteUser(db *application.Application) http.HandlerFunc {
 		if err != nil {
 			utils.SendJSON(
 				w,
-				response.ResponseError{Error: err.Error()},
+				models.ResponseError{Error: err.Error()},
 				http.StatusNotFound,
 			)
 			return
 		}
 
-		response := user.UserResponse{
+		response := models.UserResponse{
 			Id:        id.String(),
 			FirstName: u.FirstName,
 			LastName:  u.LastName,

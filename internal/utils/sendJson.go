@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"log/slog"
 	"net/http"
-	"userCrud/models/response"
+	"userCrud/internal/models"
 )
 
 func SendJSON[T any](w http.ResponseWriter, resp T, status int) {
@@ -14,7 +14,7 @@ func SendJSON[T any](w http.ResponseWriter, resp T, status int) {
 		slog.Error("failed to mershal json data", "error", err)
 		SendJSON(
 			w,
-			response.ResponseError{Error: "something went wrong"},
+			models.ResponseError{Error: "something went wrong"},
 			http.StatusInternalServerError,
 		)
 		return

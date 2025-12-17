@@ -3,16 +3,14 @@ package services
 import (
 	"encoding/json"
 	"net/http"
-	"userCrud/models/application"
-	"userCrud/models/response"
-	"userCrud/models/user"
-	"userCrud/utils"
+	"userCrud/internal/models"
+	"userCrud/internal/utils"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 )
 
-func HandleUpdateUser(db *application.Application) http.HandlerFunc {
+func HandleUpdateUser(db *models.Application) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		idString := chi.URLParam(r, "id")
 		id, err := uuid.Parse(idString)
@@ -20,36 +18,36 @@ func HandleUpdateUser(db *application.Application) http.HandlerFunc {
 		if err != nil {
 			utils.SendJSON(
 				w,
-				response.ResponseError{Error: "id is invalid"},
+				models.ResponseError{Error: "id is invalid"},
 				http.StatusBadRequest,
 			)
 			return
 		}
 
-		var body user.UserBody
+		var body models.UserBody
 		if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 			utils.SendJSON(
 				w,
-				response.ResponseError{Error: "invalid body"},
+				models.ResponseError{Error: "invalid body"},
 				http.StatusUnprocessableEntity,
 			)
 			return
 		}
 
-		u := user.User(body)
+		u := models.User(body)
 
 		u, id, err = db.Update(u, id)
 
 		if err != nil {
 			utils.SendJSON(
 				w,
-				response.ResponseError{Error: err.Error()},
+				models.ResponseError{Error: err.Error()},
 				http.StatusNotFound,
 			)
 			return
 		}
 
-		response := user.UserResponse{
+		response := models.UserResponse{
 			Id:        id.String(),
 			FirstName: u.FirstName,
 			LastName:  u.LastName,
