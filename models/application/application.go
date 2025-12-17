@@ -8,56 +8,55 @@ import (
 )
 
 type Application struct {
-	data map[user.Id]user.User
+	data map[uuid.UUID]user.User
 }
 
 func NewApplication() *Application {
 	return &Application{
-		data: make(map[user.Id]user.User),
+		data: make(map[uuid.UUID]user.User),
 	}
 }
 
-func (a *Application) FindAll() []user.UserResponse {
-	users := make([]user.UserResponse, 0, len(a.data))
-	for id, u := range a.data {
-		u := user.UserResponse{
-			Id:        id.String(),
-			FirstName: u.FirstName,
-			LastName:  u.LastName,
-			Biography: u.Biography,
-		}
-		users = append(users, u)
-	}
-	return users
+func (a *Application) FindAll() map[uuid.UUID]user.User {
+	return a.data
 }
 
-func (a *Application) FindById(id user.Id) (user.UserResponse, error) {
+func (a *Application) FindById(id uuid.UUID) (user.User, error) {
 	u, ok := a.data[id]
 
 	if !ok {
-		return user.UserResponse{}, errors.New("user not found")
+		return user.User{}, errors.New("user not found")
 	}
 
-	uJson := user.UserResponse{
-		Id:        id.String(),
-		FirstName: u.FirstName,
-		LastName:  u.LastName,
-		Biography: u.Biography,
-	}
-
-	return uJson, nil
+	return u, nil
 }
 
-func (a *Application) Insert(u user.User) (user.User, user.Id) {
-	id := user.Id(uuid.New())
+func (a *Application) Insert(u user.User) (user.User, uuid.UUID) {
+	id := uuid.New()
 	a.data[id] = u
 	return u, id
 }
 
-func (a *Application) Update(u user.User, id user.Id) {
+func (a *Application) Update(u user.User, id uuid.UUID) (user.User, uuid.UUID, error) {
+	_, ok := a.data[id]
+
+	if !ok {
+		return user.User{}, id, errors.New("user not found")
+	}
+
 	a.data[id] = u
+
+	return u, id, nil
 }
 
-func (a *Application) Delete(id user.Id) {
+func (a *Application) Delete(id uuid.UUID) (user.User, uuid.UUID, error) {
+	u, ok := a.data[id]
+
+	if !ok {
+		return user.User{}, id, errors.New("user not found")
+	}
+
 	delete(a.data, id)
+
+	return u, id, nil
 }

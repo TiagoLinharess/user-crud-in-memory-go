@@ -17,6 +17,10 @@ func NewHandler(db *application.Application) http.Handler {
 	r.Use(middleware.Logger)
 
 	r.Post("/api/users", services.HandleSaveUser(db))
+	r.Get("/api/users", services.HandleGetUsers(db))
+	r.Get("/api/users/{id}", services.HandleGetUser(db))
+	r.Put("/api/users/{id}", services.HandleUpdateUser(db))
+	r.Delete("/api/users/{id}", services.HandleDeleteUser(db))
 
 	return r
 }
